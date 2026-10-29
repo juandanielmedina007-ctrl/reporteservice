@@ -1,0 +1,30 @@
+databases:
+  - name: reportes-db-medina
+    databaseName: reportes
+    user: reportes_user
+    plan: free
+services:
+  - type: web
+    name: reporteservice-medina-garces
+    runtime: docker
+    plan: free
+    healthCheckPath: /reportes/?offset=0&limit=1
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DB_HOST
+        fromDatabase:
+          name: reportes-db-medina
+          property: host
+      - key: DB_NAME
+        fromDatabase:
+          name: reportes-db-medina
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: reportes-db-medina
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: reportes-db-medina
+          property: password

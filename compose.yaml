@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: reportes
+      POSTGRES_USER: reportes
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD antes de iniciar}
+    volumes:
+      - reportes-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reportes -d reportes"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  api:
+    build: .
+    ports: ["8080:8080"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: db
+      DB_NAME: reportes
+      DB_USERNAME: reportes
+      DB_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD antes de iniciar}
+volumes:
+  reportes-data:
